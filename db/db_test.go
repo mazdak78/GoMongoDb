@@ -84,6 +84,84 @@ func TestReturnAllHeroes(t *testing.T) {
 		log.Println(hero.Name, hero.Alias, hero.Signed, hero.Age, hero.Id)
 	}
 
+
+	log.Println("--------------------------")
+
+	//And operator: age greater/equal to 30 and name equal to Anai
+	filter = bson.M{
+		"$and": []bson.M{
+			bson.M{"name": "Anai"},
+			bson. M{"age": bson. M{"$gte":30}},
+		},
+	}
+
+	log.Println("And operator: age greater/equal to 30 and name equal to Anai")
+	heroes = ReturnAllHeroes(c, filter)
+	for _, hero := range heroes {
+		log.Println(hero.Name, hero.Alias, hero.Signed, hero.Age, hero.Id)
+	}
+
+	log.Println("--------------------------")
+
+	//Or operator: age greater/equal to 30 or name equal to Anai
+	filter = bson.M{
+		"$or": []bson.M{
+			bson.M{"name": "Anai"},
+			bson. M{"age": bson. M{"$gte":30}},
+		},
+	}
+
+	log.Println("Or operator: age greater/equal to 30 or name equal to Anai")
+	heroes = ReturnAllHeroes(c, filter)
+	for _, hero := range heroes {
+		log.Println(hero.Name, hero.Alias, hero.Signed, hero.Age, hero.Id)
+	}
+
+
+	log.Println("--------------------------")
+
+	//And-Or operator together 1
+	// age less than 10 OR greater than 30, AND "signed" false
+	filter = bson.M{
+		"$and": []bson.M{
+				bson.M{
+					"$or": []bson.M{
+						bson. M{"age": bson. M{"$lt":10}},
+						bson. M{"age": bson. M{"$gt":30}},
+					},
+				},
+				bson.M{"signed": false},
+			},
+		}
+
+	log.Println("And-Or operator together 1")
+	heroes = ReturnAllHeroes(c, filter)
+	for _, hero := range heroes {
+		log.Println(hero.Name, hero.Alias, hero.Signed, hero.Age, hero.Id)
+	}
+
+	log.Println("--------------------------")
+
+	//And-Or operator together 2
+	// age more than 30 AND alias equal Mazoo , OR "signed" false
+	filter = bson.M{
+		"$or": []bson.M{
+			bson.M{
+				"$and": []bson.M{
+					bson. M{"alias": "Mazoo"},
+					bson. M{"age": bson. M{"$gt":30}},
+				},
+			},
+			bson.M{"signed": false},
+		},
+	}
+
+	log.Println("And-Or operator together 2")
+	heroes = ReturnAllHeroes(c, filter)
+	for _, hero := range heroes {
+		log.Println(hero.Name, hero.Alias, hero.Signed, hero.Age, hero.Id)
+	}
+
 	log.Println("--------------------------")
 
 }
