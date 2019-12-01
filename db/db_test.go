@@ -23,6 +23,17 @@ func TestReturnAllHeroes(t *testing.T) {
 
 	log.Println("--------------------------")
 
+	//get age less than and equal to 30
+	filter = bson. M{"age": bson. M{"$lte":30}}
+
+	log.Println("Get documents with age less than and equal to 30:")
+	heroes = ReturnAllHeroes(c, filter)
+	for _, hero := range heroes {
+		log.Println(hero.Name, hero.Alias, hero.Signed, hero.Age, hero.Id)
+	}
+
+	log.Println("--------------------------")
+
 
 	//Get documents name equal to Mazdak(Case sensitive)
 	filter = bson.M{"name": "Mazdak"}
@@ -56,6 +67,18 @@ func TestReturnAllHeroes(t *testing.T) {
 	filter = bson. M{"name": regex}
 
 	log.Println("Get documents: name like 'mazdak' ")
+	heroes = ReturnAllHeroes(c, filter)
+	for _, hero := range heroes {
+		log.Println(hero.Name, hero.Alias, hero.Signed, hero.Age, hero.Id)
+	}
+
+	log.Println("--------------------------")
+
+
+	//Get documents: age field does not exists
+	filter = bson. M{"age": bson. M{"$exists": false}}
+
+	log.Println("Get documents: age field does not exists")
 	heroes = ReturnAllHeroes(c, filter)
 	for _, hero := range heroes {
 		log.Println(hero.Name, hero.Alias, hero.Signed, hero.Age, hero.Id)
