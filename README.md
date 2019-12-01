@@ -6,7 +6,7 @@
  
 It was very hard to found bson samples for Golang, so during time I started to gather and create this sample collection.
 
- ###Query examples:
+ ## Query examples:
   
  
  Retrieve by int field "age" greater than and equal to 30
