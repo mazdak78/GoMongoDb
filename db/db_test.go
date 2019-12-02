@@ -183,7 +183,7 @@ func TestReturnAllHeroes(t *testing.T) {
 	// get docs updated since last 5 days
 	filter = bson. M{"lastUpdate": bson. M{"$gte": primitive.Timestamp{T:uint32(time.Now().AddDate(0,0,-5).Unix())} }}
 
-	log.Println("Get docs created from yesterday")
+	log.Println("Get docs updated since last 5 days")
 	heroes = ReturnAllHeroes(c, filter)
 	for _, hero := range heroes {
 		log.Println(hero.Name, hero.Alias, hero.Signed, hero.Age, hero.Id)
