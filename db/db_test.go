@@ -181,7 +181,7 @@ func TestReturnAllHeroes(t *testing.T) {
 
 	//timestamp
 	// get docs updated since last 5 days
-	filter = bson. M{"lastUpdate": bson. M{"$gte": primitive.Timestamp{T:uint32(time.Now().AddDate(0,0,-10).Unix())} }}
+	filter = bson. M{"lastUpdate": bson. M{"$gte": primitive.Timestamp{T:uint32(time.Now().AddDate(0,0,-5).Unix())} }}
 
 	log.Println("Get docs created from yesterday")
 	heroes = ReturnAllHeroes(c, filter)
