@@ -4,7 +4,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
+	"math/rand"
 	"testing"
+	"time"
 )
 
 func TestReturnAllHeroes(t *testing.T) {
@@ -164,13 +166,40 @@ func TestReturnAllHeroes(t *testing.T) {
 
 	log.Println("--------------------------")
 
+
+	//time
+	// get docs created from yesterday
+	filter = bson. M{"createdDate": bson. M{"$gte": time.Now().AddDate(0,0,-1)}}
+
+	log.Println("Get docs created from yesterday")
+	heroes = ReturnAllHeroes(c, filter)
+	for _, hero := range heroes {
+		log.Println(hero.Name, hero.Alias, hero.Signed, hero.Age, hero.Id)
+	}
+
+	log.Println("--------------------------")
+
+	//timestamp
+	// get docs updated since last 5 days
+	filter = bson. M{"lastUpdate": bson. M{"$gte": primitive.Timestamp{T:uint32(time.Now().AddDate(0,0,-10).Unix())} }}
+
+	log.Println("Get docs created from yesterday")
+	heroes = ReturnAllHeroes(c, filter)
+	for _, hero := range heroes {
+		log.Println(hero.Name, hero.Alias, hero.Signed, hero.Age, hero.Id)
+	}
+
+	log.Println("--------------------------")
+
 }
 
 func TestReturnOneHero(t *testing.T) {
 	c := GetClient()
 
-	hero := ReturnOneHero(c, bson.M{"name": "Vision"})
-	log.Println(hero.Name, hero.Alias, hero.Signed, hero.Age)
+	docID, _ := primitive.ObjectIDFromHex("5de30166e4fabe4778f0ffde")
+
+	hero := ReturnOneHero(c, bson.M{"_id" : docID})
+	log.Println(hero.Name, hero.Alias, hero.Signed, hero.Age, hero.LastUpdate)
 	log.Println("--------------------------")
 }
 
@@ -199,8 +228,19 @@ func TestRemoveOneHero(t *testing.T) {
 func TestUpdateHero(t *testing.T) {
 	c := GetClient()
 
-	heroesUpdated := UpdateHero(c, bson.M{"age": 39}, bson.M{"alias": "Mazoo"})
-	log.Println("Heroes updated count:", heroesUpdated)
+	//docID, _ := primitive.ObjectIDFromHex("5de30185e4fabe4778f0ffdf")
+
+	heroes := ReturnAllHeroes(c, bson.M{})
+
+	for _, h := range heroes{
+
+		random := rand.Intn(30)
+
+		heroesUpdated:= UpdateHero(c, bson.M{/*"createdDate": time.Now(),*/ "lastUpdate": primitive.Timestamp{T:uint32(time.Now().AddDate(0,0, -random).Unix())} }, bson.M{"_id": h.Id})
+		log.Println("Heroes updated count: ", heroesUpdated)
+
+	}
+
 
 	log.Println("--------------------------")
 }

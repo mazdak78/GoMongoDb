@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"log"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -41,6 +42,8 @@ type Hero struct {
 	Alias  string `json:"alias"`
 	Signed bool   `json:"signed"`
 	Age int   `json:"age"`
+	CreatedDate time.Time   `json:"createdDaate"`
+	LastUpdate primitive.Timestamp `json:"lastUpdate" bson:"lastUpdate,omitempty"`
 }
 
 

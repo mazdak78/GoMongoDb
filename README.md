@@ -91,3 +91,17 @@ And-Or operator together 2. "age" more than 30 AND "alias" equal "Mazoo" , OR "s
 			bson.M{"signed": false},
 		},
 	}
+	
+Get one Record by ObjectId
+
+    docID, _ := primitive.ObjectIDFromHex("5de30185e4fabe4778f0ffdf")
+
+	hero := ReturnOneHero(c, bson.M{"_id" : docID})
+
+Get documents created from yesterday
+
+	filter = bson. M{"createdDate": bson. M{"$gte": time.Now().AddDate(0,0,-1)}}
+	
+Get documents updated since last 5 days based on timestamp type field
+	
+	filter = bson. M{"lastUpdate": bson. M{"$gte": primitive.Timestamp{T:uint32(time.Now().AddDate(0,0,-10).Unix())} }}
