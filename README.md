@@ -106,7 +106,7 @@ Get documents updated since last 5 days based on timestamp type field
 	
 	filter = bson. M{"lastUpdate": bson. M{"$gte": primitive.Timestamp{T:uint32(time.Now().AddDate(0,0,-10).Unix())} }}
 
-##Some Piplines:
+## Some Piplines:
 
 Stage 1: Join to city document.
 Stage 2: Select specific fields with $project
