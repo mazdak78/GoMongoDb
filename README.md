@@ -1,5 +1,5 @@
 # MongoDB Go driver  Query Samples 
- Samples in Golang for MongoDb driver - Various Find query examples
+ Samples in Golang for MongoDb driver - Various query examples
  
  The original CRUD examples are taken from here:
  https://dev.to/eduardohitek/mongodb-golang-driver-tutorial-49e5
@@ -106,7 +106,7 @@ Get documents updated since last 5 days based on timestamp type field
 	
 	filter = bson. M{"lastUpdate": bson. M{"$gte": primitive.Timestamp{T:uint32(time.Now().AddDate(0,0,-10).Unix())} }}
 
-Create Piplines:
+##Some Piplines:
 
 Stage 1: Join to city document.
 Stage 2: Select specific fields with $project
