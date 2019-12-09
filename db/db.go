@@ -103,3 +103,34 @@ func UpdateHero(client *mongo.Client, updatedData bson.M, filter bson.M) int64 {
 	}
 	return updatedResult.ModifiedCount
 }
+
+
+func AggregateHeroes(client *mongo.Client, p []bson.M) {
+
+
+	collection := client.Database("civilact").Collection("heroes")
+
+	csr, err := collection.Aggregate(context.TODO(), p)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	defer csr.Close(context.TODO())
+
+
+	log.Println("------------------------")
+	result := make([]bson.M, 0)
+	for csr.Next(context.TODO()) {
+		var row bson.M
+		err := csr.Decode(&row)
+		log.Println(row)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+
+		result = append(result, row)
+	}
+
+
+
+	log.Println("------------------------")
+}

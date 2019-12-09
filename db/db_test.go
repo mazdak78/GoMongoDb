@@ -1,10 +1,12 @@
 package db
 
 import (
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
 	"math/rand"
+	"strings"
 	"testing"
 	"time"
 )
@@ -243,4 +245,103 @@ func TestUpdateHero(t *testing.T) {
 
 
 	log.Println("--------------------------")
+}
+
+func TestAggregateHeroesWithMarshalJson(t *testing.T) {
+	c := GetClient()
+
+	pipeline := make([]bson.M, 0)
+	err := bson.UnmarshalExtJSON([]byte(strings.TrimSpace(`
+		   [{
+			"$lookup": {
+						"from" : "cities",
+						"localField": "cityId",
+						"foreignField": "_id",
+						"as" : "city"
+					}}
+			, {
+			"$project": {
+			  "_id": 0,
+			  "name": 1,
+			  "age": 1,
+			  "city": { "$arrayElemAt" : ["$city.name", 0]}
+			}},
+			{
+			"$group": {
+			  "_id" : "$city",
+			  "count": {
+				"$sum": 1
+			  }
+			}}]
+			`)), true, &pipeline)
+
+	if err != nil{
+		log.Println(err.Error())
+	}
+
+	AggregateHeroes(c, pipeline)
+}
+
+
+func TestAggregateHeroesWithMarshalJson2(t *testing.T) {
+	c := GetClient()
+
+	var age = 30
+	pipeline := make([]bson.M, 0)
+	err := bson.UnmarshalExtJSON([]byte(strings.TrimSpace(`
+		   [{
+				"$match": {
+					"age": {
+						"$gte": ` + fmt.Sprintf("%v", age) +`
+					}
+				}
+		}]
+			`)), true, &pipeline)
+
+	if err != nil{
+		log.Println(err.Error())
+	}
+
+	AggregateHeroes(c, pipeline)
+}
+
+
+func TestAggregateHeroesWithBJson(t *testing.T) {
+	c := GetClient()
+	stage1 := bson.M{
+		"$lookup": bson.M{
+			"from": "cities",
+			"localField": "cityId",
+			"foreignField": "_id",
+			"as" : "city",
+		},
+	}
+
+	stage2 := bson.M{
+		"$project": bson.M{
+			"_id": 0,
+			"name": 1,
+			"age": 1,
+			"city": bson.M{ "$arrayElemAt" : []interface{}{"$city.name",0} },
+		},
+	}
+
+	stage3 := bson.M{
+		"$group": bson.M{
+			"_id" : "$city",
+			"count": bson.M{
+				"$sum": 1,
+			},
+		},}
+
+
+	pipeline := make([]bson.M, 0)
+
+	pipeline = append(pipeline, stage1)
+	pipeline = append(pipeline, stage2)
+	pipeline = append(pipeline, stage3)
+
+
+
+	AggregateHeroes(c, pipeline)
 }

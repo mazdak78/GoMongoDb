@@ -1,0 +1,4 @@
+{"_id":{"$oid":"5debb27f3bf39666e8a81a9c"},"name":"Quito"}
+{"_id":{"$oid":"5debb2873bf39666e8a81a9d"},"name":"Berlin"}
+{"_id":{"$oid":"5debb2963bf39666e8a81a9e"},"name":"New York"}
+{"_id":{"$oid":"5debb2a13bf39666e8a81a9f"},"name":"Tehran"}

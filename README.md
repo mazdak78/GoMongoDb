@@ -105,3 +105,62 @@ Get documents created from yesterday
 Get documents updated since last 5 days based on timestamp type field
 	
 	filter = bson. M{"lastUpdate": bson. M{"$gte": primitive.Timestamp{T:uint32(time.Now().AddDate(0,0,-10).Unix())} }}
+
+Create Piplines:
+
+Stage 1: Join to city document.
+Stage 2: Select specific fields with $project
+Stage 3: Group on city field and count number of each city on the document.
+
+	stage1 := bson.M{
+		"$lookup": bson.M{
+			"from": "cities",
+			"localField": "cityId",
+			"foreignField": "_id",
+			"as" : "city",
+		},
+	}
+
+	stage2 := bson.M{
+		"$project": bson.M{
+			"_id": 0,
+			"name": 1,
+			"age": 1,
+			"city": bson.M{ "$arrayElemAt" : []interface{}{"$city.name",0} },
+		},
+	}
+
+	stage3 := bson.M{
+		"$group": bson.M{
+			"_id" : "$city",
+			"count": bson.M{
+				"$sum": 1,
+			},
+		},}
+
+Gain the same result with bson.UnmarshalExtJSON. With this technique, we can directly take guery from MongoDb Compass  (Json stirng), and this method will convert it to proper format.
+
+	pipeline := make([]bson.M, 0)
+	err := bson.UnmarshalExtJSON([]byte(strings.TrimSpace(`
+		   [{
+			"$lookup": {
+						"from" : "cities",
+						"localField": "cityId",
+						"foreignField": "_id",
+						"as" : "city"
+					}}
+			, {
+			"$project": {
+			  "_id": 0,
+			  "name": 1,
+			  "age": 1,
+			  "city": { "$arrayElemAt" : ["$city.name", 0]}
+			}},
+			{
+			"$group": {
+			  "_id" : "$city",
+			  "count": {
+				"$sum": 1
+			  }
+			}}]
+			`)), true, &pipeline)
